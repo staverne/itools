@@ -40,7 +40,8 @@ from utils import NewJSONEncoder
 
 
 
-def process_form(get_value, schema):
+def process_form(get_value, schema, error_msg=None):
+    messages = []
     missings = []
     invalids = []
     values = {}
@@ -49,13 +50,16 @@ def process_form(get_value, schema):
         try:
             values[name] = get_value(name, type=datatype)
         except FormError, e:
+            messages.append(e.get_message())
             if e.missing:
                 missings.append(name)
             elif e.invalid:
                 invalids.append(name)
     if missings or invalids:
+        error_msg = error_msg or ERROR(u'Form values are invalid')
         raise FormError(
-            message=ERROR(u'There are errors, check below.'),
+            message=error_msg,
+            messages=messages,
             missing=len(missings)>0,
             invalid=len(invalids)>0,
             missings=missings,
@@ -168,6 +172,7 @@ class BaseView(prototype):
         return self.schema
 
 
+    form_error_message = ERROR(u'There are errors, check below')
     def _get_form(self, resource, context):
         """Form checks the request form and collect inputs consider the
         schema.  This method also checks the request form and raise an
@@ -180,7 +185,7 @@ class BaseView(prototype):
         """
         get_value = context.get_form_value
         schema = self.get_schema(resource, context)
-        return process_form(get_value, schema)
+        return process_form(get_value, schema, self.form_error_message)
 
 
     def get_value(self, resource, context, name, datatype):

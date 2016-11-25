@@ -17,6 +17,7 @@
 # Import from itools
 from itools.core import is_prototype, prototype
 from itools.gettext import MSG
+from itools.validators import validator
 
 
 class Field(prototype):
@@ -31,6 +32,8 @@ class Field(prototype):
         'invalid': MSG(u'Invalid value.'),
         'required': MSG(u'This field is required.'),
     }
+    validators = []
+
 
     def get_datatype(self):
         return self.datatype
@@ -40,6 +43,14 @@ class Field(prototype):
         # mode may be "read" or "write"
         return True
 
+
+    def get_validators(self):
+        validators = []
+        for v in self.validators:
+              if type(v) is str:
+                  v = validator(v)()
+              validators.append(v)
+        return validators
 
 
 def get_field_and_datatype(elt):
