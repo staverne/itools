@@ -14,6 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# Import from itools
+from itools.gettext import MSG
+
 
 class ValidationError(Exception):
 
@@ -37,8 +40,11 @@ class ValidationError(Exception):
         return l
 
 
-    def get_message(self, field=None):
+    def get_message(self, field=None, mode='html'):
         messages = self.get_messages(field)
+        if mode == 'html':
+            msg = '<br/>'.join(messages)
+            return MSG(msg, format='html')
         return '\n'.join(messages)
 
 

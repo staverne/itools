@@ -18,8 +18,9 @@
 from base import BaseValidator
 from exceptions import ValidationError
 from registry import register_validator, validator
-import files
 import database
+import files
+import password
 
 __all__ = [
       'BaseValidator',

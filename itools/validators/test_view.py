@@ -30,7 +30,7 @@ class TestValidators(AutoEdit):
 
     fields = ['field_1', 'field_2', 'field_3', 'field_4', 'field_5', 'field_6',
               'field_7', 'field_8', 'field_9', 'field_10', 'field_11', 'field_12',
-              'field_13']
+              'field_13', 'field_14']
 
     field_1 = Integer_Field(
         title=MSG(u'5+5 equals to ?'),
@@ -75,6 +75,9 @@ class TestValidators(AutoEdit):
     field_13 = File_Field(
         title=MSG(u'Image max pixels'),
         validators=[validator('image-pixels', max_pixels=10*10)])
+    field_14 = Char_Field(
+        title=MSG(u'Strong password'),
+        validators=[validator('strong-password')])
 
 
     def _get_datatype(self, resource, context, name):

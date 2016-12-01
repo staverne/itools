@@ -66,6 +66,14 @@ class BaseValidator(validator_prototype):
         raise ValidationError(msg, code, kw)
 
 
+    def raise_errors(self, errors, kw={}):
+        l = []
+        for code in errors:
+            msg = self.errors[code]
+            l.append((msg, code, kw))
+        raise ValidationError(l)
+
+
     def __call__(self, value):
         return self.check(value)
 
