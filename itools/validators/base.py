@@ -61,7 +61,7 @@ class BaseValidator(validator_prototype):
         return self.msg
 
 
-    def raise_default_error(self, kw=None):
+    def raise_default_error(self, kw={}):
         code, msg = self.errors.items()[0]
         raise ValidationError(msg, code, kw)
 
@@ -97,18 +97,18 @@ class RegexValidator(BaseValidator):
 
 
 
-class IntegerValidator(RegexValidator):
 
-    validator_id = 'integer'
-    regex = '^-?\d+\Z'
-    errors = {'valid-integer':  MSG(u'Enter a valid integer.')}
+class HexadecimalValidator(RegexValidator):
 
+    validator_id = 'hexadecimal'
+    regex = '^#[A-Fa-f0-9]+$'
+    errors = {'invalid': MSG(u'Enter a valid value.')}
 
 
 class PositiveIntegerValidator(BaseValidator):
 
     validator_id = 'integer-positive'
-    errors = {'integer-positive':  MSG(u'Positiver XXX')}
+    errors = {'integer-positive':  MSG(u'Ensure this value is positive.')}
 
     def check(self, value):
         if value < 0:
@@ -120,10 +120,10 @@ class PositiveIntegerValidator(BaseValidator):
 class PositiveIntegerNotNullValidator(BaseValidator):
 
     validator_id = 'integer-positive-not-null'
-    errors = {'integer-positive-not-null':  MSG(u'XXX')}
+    errors = {'integer-positive-not-null':  MSG(u'Ensure this value is greater than 0.')}
 
     def check(self, value):
-        if value <= 0:
+        if value and value <= 0:
             kw = {'value': value}
             self.raise_default_error(kw)
 
@@ -132,11 +132,11 @@ class PositiveIntegerNotNullValidator(BaseValidator):
 class MaxValueValidator(BaseValidator):
 
     validator_id = 'max-value'
-    errors = {'max-value':  MSG(u'Ensure this value is less than or equal to {max_value}')}
+    errors = {'max-value':  MSG(u'Ensure this value is less than or equal to {max_value}.')}
     max_value = None
 
     def check(self, value):
-        if value > self.max_value:
+        if value and value > self.max_value:
             kw = {'max_value': self.max_value}
             self.raise_default_error(kw)
 
@@ -158,15 +158,16 @@ class MinValueValidator(BaseValidator):
 class MinMaxValueValidator(BaseValidator):
 
     validator_id = 'min-max-value'
-    errors = {'min_max_value': MSG(
-        u'Ensure this value is greater than or equal to {min_value}.'
+    errors = {'min-max-value': MSG(
+        u'Ensure this value is greater than or equal to {min_value} '
         u'and value is less than or equal to {max_value}.')}
     min_value = None
     max_value = None
 
     def check(self, value):
        if value < self.min_value or value > self.max_value:
-            kw = {'max_value': self.max_value}
+            kw = {'max_value': self.max_value,
+                  'min_value': self.min_value}
             self.raise_default_error(kw)
 
 
@@ -176,11 +177,13 @@ class MinLengthValidator(BaseValidator):
 
     validator_id = 'min-length'
     min_length = 0
-    errors = {'min_length': MSG(u'Error')}
+    errors = {'min-length': MSG(u'Ensure this value has at least {min_length} characters.')}
 
     def check(self, value):
         if len(value) < self.min_length:
-            kw = {'value': value, 'min_length': self.min_length}
+            kw = {'value': value,
+                  'size': len(value),
+                  'min_length': self.min_length}
             self.raise_default_error(kw)
 
 
@@ -189,17 +192,11 @@ class MaxLengthValidator(BaseValidator):
 
     validator_id = 'max-length'
     max_length = 0
-    errors = {'max_length': MSG(u'Error')}
+    errors = {'max-length': MSG(u'Ensure this value has at most {max_length} characters.')}
 
     def check(self, value):
         if len(value) > self.max_length:
-            kw = {'value': value, 'max_length': self.max_length}
+            kw = {'value': value,
+                  'size': len(value),
+                  'max_length': self.max_length}
             self.raise_default_error(kw)
-
-
-
-class HexadecimalValidator(RegexValidator):
-
-    validator_id = 'hexadecimal'
-    regex = '^#[A-Fa-f0-9]+$'
-    errors = {'invalid': MSG(u'Hexa invalide')}

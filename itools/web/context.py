@@ -1109,8 +1109,8 @@ def _get_form_value(form, name, type=String, default=None):
         default = datatype.get_default()
 
     # Errors
-    required_msg = field.error_messages['required']
-    invalid_msg = field.error_messages['invalid']
+    required_msg = field.get_error_message('required')
+    invalid_msg = field.get_error_message('invalid')
 
     # Missing
     is_mandatory = getattr(datatype, 'mandatory', False)
@@ -1170,7 +1170,7 @@ def check_form_value(field, value):
         try:
             validator.check(value)
         except ValidationError, e:
-            msg = e.get_message()
+            msg = e.get_message(field)
             raise FormError(msg, invalid=True)
 
 
@@ -1180,7 +1180,8 @@ def get_form_value(form, name, type=String, default=None):
     is_multilingual = getattr(type, 'multilingual', False)
     if is_multilingual is False:
         value = _get_form_value(form, name, type, default)
-        check_form_value(field, value)
+        if value is not None:
+            check_form_value(field, value)
         return value
     # Multilingual
     values = {}
@@ -1189,7 +1190,8 @@ def get_form_value(form, name, type=String, default=None):
             x, lang = key.split(':', 1)
             value =_get_form_value(form, key, type, default)
             values[lang] = value
-    check_form_value(field, values)
+    if value is not None:
+        check_form_value(field, values)
     return values
 
 

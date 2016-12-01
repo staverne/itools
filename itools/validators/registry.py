@@ -15,8 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
 validators_registry = {}
 
 def register_validator(cls):

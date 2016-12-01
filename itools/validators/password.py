@@ -33,7 +33,7 @@ class StrongPasswordValidator(BaseValidator):
     min_length = 8
 
     errors = {
-        'too_short': MSG(u"This password is too short. It must contain at least {min_length} characters.")
+        'too-short': MSG(u"This password is too short. It must contain at least {min_length} characters.")
       }
     help_msg = MSG(u"Your password must contain at least {min_length} characters.")
 

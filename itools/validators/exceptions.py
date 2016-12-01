@@ -28,15 +28,17 @@ class ValidationError(Exception):
         self.errors = errors
 
 
-    def get_messages(self):
+    def get_messages(self, field):
         l = []
         for msg, code, msg_params in self.errors:
+            field_msg = field.get_error_message(code) if field else None
+            msg = field_msg or msg
             l.append(msg.gettext(**msg_params))
         return l
 
 
-    def get_message(self):
-        messages = self.get_messages()
+    def get_message(self, field=None):
+        messages = self.get_messages(field)
         return '\n'.join(messages)
 
 

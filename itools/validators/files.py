@@ -33,7 +33,7 @@ class FileExtensionValidator(BaseValidator):
 
     validator_id = 'file-extension'
     allowed_extensions = []
-    errors = {'invalid_extension': MSG(
+    errors = {'invalid-extension': MSG(
             u"File extension '{extension}' is not allowed. "
             u"Allowed extensions are: '{allowed_extensions}'.")}
 
@@ -41,7 +41,8 @@ class FileExtensionValidator(BaseValidator):
     def check(self, value):
         extension = self.get_extension(value)
         if extension not in self.allowed_extensions:
-            kw = {'value': value}
+            kw = {'extension': extension,
+                  'allowed_extensions': ','.join(self.allowed_extensions)}
             self.raise_default_error(kw)
 
 
@@ -60,15 +61,18 @@ class ImageExtensionValidator(FileExtensionValidator):
 
 class MimetypesValidator(BaseValidator):
 
-    validator_id = 'mimetypes'
-    authorized_mimetypes = []
-    errors = {'bad_mimetype': MSG(u"XXX")}
+    validator_id = 'file-mimetypes'
+    allowed_mimetypes = []
+    errors = {'bad-mimetype': MSG(
+            u"File mimetype '{mimetype}' is not allowed. "
+            u"Allowed mimetypes are: '{allowed_mimetypes}'.")}
 
 
     def check(self, value):
         filename, mimetype, body = value
-        if mimetype not in self.authorized_mimetypes:
-            kw = {'value': value}
+        if mimetype not in self.allowed_mimetypes:
+            kw = {'mimetype': mimetype,
+                  'allowed_mimetypes': ','.join(self.allowed_mimetypes)}
             self.raise_default_error(kw)
 
 
@@ -76,7 +80,7 @@ class MimetypesValidator(BaseValidator):
 class ImageMimetypesValidator(MimetypesValidator):
 
     validator_id = 'image-mimetypes'
-    authorized_mimetypes = ['image/jpeg', 'image/png', 'image/gif']
+    allowed_mimetypes = ['image/jpeg', 'image/png', 'image/gif']
 
 
 
@@ -84,14 +88,29 @@ class FileSizeValidator(BaseValidator):
 
     validator_id = 'file-size'
     max_size = 1024*1024*10
-    errors = {'too_big': MSG(u'XXX')}
+    errors = {'too_big': MSG(u'Your file is too big. ({size})')}
 
     def check(self, value):
         filename, mimetype, body = value
         size = len(body)
         if size > self.max_size:
-            kw = {'size': size}
+            kw = {'size': self.pretty_bytes(size),
+                  'max_size': self.pretty_bytes(self.max_size)}
             self.raise_default_error(kw)
+
+
+    def pretty_bytes(self, b):
+        # 1 Byte = 8 Bits
+        # 1 Kilobyte = 1024 Bytes
+        # 1 Megabyte = 1048576 Bytes
+        # 1 Gigabyte = 1073741824 Bytes
+        if b < 1024:
+            return u'%.01f Bytes' % b
+        elif b < 1048576:
+            return u'%.01f KB' % (b / 1024)
+        elif b < 1073741824:
+            return u'%.01f MB' % (b / 1048576)
+        return u'%.01f GB' % (b / 1073741824)
 
 
 
@@ -100,8 +119,8 @@ class ImagePixelsValidator(BaseValidator):
     validator_id = 'image-pixels'
     max_pixels = 2000*2000
 
-    errors = {'too_much_pixels': MSG(u"L'image est trop grande."),
-              'image_has_errors': MSG(u"L'image contient des erreurs")}
+    errors = {'too-much-pixels': MSG(u"Image is too big."),
+              'image-has-errors': MSG(u"Image contains errors.")}
 
     def check(self, value):
         filename, mimetype, body = value
@@ -110,8 +129,8 @@ class ImagePixelsValidator(BaseValidator):
             im = PILImage.open(data)
             im.verify()
         except Exception:
-            code = 'image_has_errors'
-            raise ValidationError(code, self.errors[code], {})
+            code = 'image-has-errors'
+            raise ValidationError(self.errors[code], code, {})
         if im.width * im.height > self.max_pixels:
-            code = 'too_much_pixels'
-            raise ValidationError(code, self.errors[code], {})
+            code = 'too-much-pixels'
+            raise ValidationError(self.errors[code], code, {})

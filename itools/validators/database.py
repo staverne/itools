@@ -24,15 +24,20 @@ from base import BaseValidator
 class UniqueValidator(BaseValidator):
 
     validator_id = 'unique'
-    errors = {'unique': MSG(u'The field {nb_results} should be unique')}
+    errors = {'unique': MSG(u'The field should be unique.')}
+    field_name = None
 
     def check(self, value):
         from itools.database import AndQuery, NotQuery
         from itools.database import PhraseQuery
+        if not value:
+            return
+        context = self.context
+        here = context.resource
         query = AndQuery(
-            NotQuery(PhraseQuery('abspath', str(self.resource.abspath))),
+            NotQuery(PhraseQuery('abspath', str(here.abspath))),
             PhraseQuery(self.field_name, value))
-        search = self.context.database.search(query)
+        search = context.database.search(query)
         nb_results = len(search)
         if nb_results > 0:
             kw = {'nb_results': nb_results}
