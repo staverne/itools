@@ -36,16 +36,16 @@ class StrongPasswordValidator(BaseValidator):
     min_length = 5
 
     errors = {
-        'too-short': MSG(u"This password is too short. It must contain at least {min_length} characters."),
-        'has-character': MSG(u"This password should contains at least one character."),
-        'has-number': MSG(u"This password should contains at least one number."),
-        'has-special-character': MSG(u"This password should contains at least one special character."),
+        'too_short': MSG(u"This password is too short. It must contain at least {min_length} characters."),
+        'need_character': MSG(u"This password should contains at least one character."),
+        'need_number': MSG(u"This password should contains at least one number."),
+        'need_special_character': MSG(u"This password should contains at least one special character."),
       }
 
     def check(self, value):
         errors = []
         if len(value) < self.min_length:
-            errors.append('too-short')
+            errors.append('too_short')
         has_letter = has_digit = has_special = False
         for c in value:
             if c in ascii_letters:
@@ -55,11 +55,11 @@ class StrongPasswordValidator(BaseValidator):
             else:
                 has_special = True
         if not has_letter:
-            errors.append('has-character')
+            errors.append('need_character')
         if not has_digit:
-            errors.append('has-number')
+            errors.append('need_number')
         if not has_special:
-            errors.append('has-special-character')
+            errors.append('need_special_character')
         if errors:
             kw = {'min_length': self.min_length}
             self.raise_errors(errors, kw)

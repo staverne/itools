@@ -35,7 +35,7 @@ class TestValidators(AutoEdit):
     field_1 = Integer_Field(
         title=MSG(u'5+5 equals to ?'),
         validators=[validator('equals-to', base_value=10)],
-        error_messages={'not-equals': MSG(u'Give me a 10 ;)')}
+        error_messages={'not_equals': MSG(u'Give me a 10 ;)')}
         )
     field_2 = Char_Field(
         title=MSG(u'Hexadecimal color'),

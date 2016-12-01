@@ -33,7 +33,7 @@ class FileExtensionValidator(BaseValidator):
 
     validator_id = 'file-extension'
     allowed_extensions = []
-    errors = {'invalid-extension': MSG(
+    errors = {'invalid_extension': MSG(
             u"File extension '{extension}' is not allowed. "
             u"Allowed extensions are: '{allowed_extensions}'.")}
 
@@ -63,7 +63,7 @@ class MimetypesValidator(BaseValidator):
 
     validator_id = 'file-mimetypes'
     allowed_mimetypes = []
-    errors = {'bad-mimetype': MSG(
+    errors = {'bad_mimetype': MSG(
             u"File mimetype '{mimetype}' is not allowed. "
             u"Allowed mimetypes are: '{allowed_mimetypes}'.")}
 
@@ -119,8 +119,8 @@ class ImagePixelsValidator(BaseValidator):
     validator_id = 'image-pixels'
     max_pixels = 2000*2000
 
-    errors = {'too-much-pixels': MSG(u"Image is too big."),
-              'image-has-errors': MSG(u"Image contains errors.")}
+    errors = {'too_much_pixels': MSG(u"Image is too big."),
+              'image_has_errors': MSG(u"Image contains errors.")}
 
     def check(self, value):
         filename, mimetype, body = value
@@ -129,8 +129,8 @@ class ImagePixelsValidator(BaseValidator):
             im = PILImage.open(data)
             im.verify()
         except Exception:
-            code = 'image-has-errors'
+            code = 'image_has_errors'
             raise ValidationError(self.errors[code], code, {})
         if im.width * im.height > self.max_pixels:
-            code = 'too-much-pixels'
+            code = 'too_much_pixels'
             raise ValidationError(self.errors[code], code, {})
