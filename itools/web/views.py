@@ -41,25 +41,25 @@ from utils import NewJSONEncoder
 
 
 def process_form(get_value, schema, error_msg=None):
-    messages = []
     missings = []
     invalids = []
+    unknow = []
     values = {}
     for name in schema:
         datatype = schema[name]
         try:
             values[name] = get_value(name, type=datatype)
         except FormError, e:
-            messages.append(e.get_message())
             if e.missing:
                 missings.append(name)
             elif e.invalid:
                 invalids.append(name)
-    if missings or invalids:
+            else:
+                unknow.append(name)
+    if missings or invalids or unknow:
         error_msg = error_msg or ERROR(u'Form values are invalid')
         raise FormError(
             message=error_msg,
-            messages=messages,
             missing=len(missings)>0,
             invalid=len(invalids)>0,
             missings=missings,

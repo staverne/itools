@@ -78,7 +78,7 @@ class TestValidators(AutoEdit):
     field_14 = Char_Field(
         title=MSG(u'Strong password'),
         validators=[validator('strong-password')])
-    field_15 = Char_Field(
+    field_15 = Integer_Field(
         title=MSG(u'Number >=5 and equals to 10'),
         validators=[
           validator('min-value', min_value=5),

@@ -1166,14 +1166,15 @@ def _get_form_value(form, name, type=String, default=None):
 def check_form_value(field, value):
     if value in field.empty_values:
         return
+    errors = []
     for validator in field.get_validators():
-        validator = validator(
-            title=field.title, context=context)
+        validator = validator(title=field.title, context=context)
         try:
             validator.check(value)
         except ValidationError, e:
-            msg = e.get_message(field)
-            raise FormError(msg, invalid=True)
+            errors.extend(e.get_messages(field))
+    if errors:
+        raise FormError(messages=errors, invalid=True)
 
 
 def get_form_value(form, name, type=String, default=None):
