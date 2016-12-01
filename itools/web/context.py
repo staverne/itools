@@ -1164,6 +1164,8 @@ def _get_form_value(form, name, type=String, default=None):
 
 
 def check_form_value(field, value):
+    if value in field.empty_values:
+        return
     for validator in field.get_validators():
         validator = validator(
             title=field.title, context=context)
@@ -1180,8 +1182,7 @@ def get_form_value(form, name, type=String, default=None):
     is_multilingual = getattr(type, 'multilingual', False)
     if is_multilingual is False:
         value = _get_form_value(form, name, type, default)
-        if value is not None:
-            check_form_value(field, value)
+        check_form_value(field, value)
         return value
     # Multilingual
     values = {}
@@ -1190,8 +1191,7 @@ def get_form_value(form, name, type=String, default=None):
             x, lang = key.split(':', 1)
             value =_get_form_value(form, key, type, default)
             values[lang] = value
-    if value is not None:
-        check_form_value(field, values)
+    check_form_value(field, values)
     return values
 
 

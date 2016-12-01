@@ -105,6 +105,7 @@ class HexadecimalValidator(RegexValidator):
     errors = {'invalid': MSG(u'Enter a valid value.')}
 
 
+
 class PositiveIntegerValidator(BaseValidator):
 
     validator_id = 'integer-positive'
@@ -123,7 +124,7 @@ class PositiveIntegerNotNullValidator(BaseValidator):
     errors = {'integer-positive-not-null':  MSG(u'Ensure this value is greater than 0.')}
 
     def check(self, value):
-        if value and value <= 0:
+        if value <= 0:
             kw = {'value': value}
             self.raise_default_error(kw)
 

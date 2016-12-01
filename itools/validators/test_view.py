@@ -56,10 +56,10 @@ class TestValidators(AutoEdit):
         title=MSG(u'Give a number (>=10 and <=20)'),
         validators=[validator('min-max-value', min_value=10, max_value=20)])
     field_8 = Char_Field(
-        title=MSG(u'Give a number (min length: 3 characters)'),
+        title=MSG(u'Give text (min length: 3 characters)'),
         validators=[validator('min-length', min_length=3)])
     field_9 = Char_Field(
-        title=MSG(u'Give a number (max length: 5 characters)'),
+        title=MSG(u'Give text (max length: 5 characters)'),
         validators=[validator('max-length', max_length=5)])
     field_10 = Email_Field(
         title=MSG(u'Give an email (unique in DB)'),

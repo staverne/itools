@@ -28,6 +28,7 @@ class Field(prototype):
     indexed = False
     stored = False
     multiple = False
+    empty_values = (None, '', [], (), {})
     base_error_messages = {
         'invalid': MSG(u'Invalid value.'),
         'required': MSG(u'This field is required.'),
