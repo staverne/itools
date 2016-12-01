@@ -63,7 +63,9 @@ class TestValidators(AutoEdit):
         validators=[validator('max-length', max_length=5)])
     field_10 = Email_Field(
         title=MSG(u'Give an email (unique in DB)'),
-        validators=[validator('unique', field_name='email')])
+        validators=[validator('unique', field_name='email')],
+        error_messages={'invalid': MSG(u'Give be an email address !!!'),
+                        'unique': MSG(u'This address is already used')})
     field_11 = File_Field(
         title=MSG(u'File extension (png)'),
         validators=[validator('file-extension', allowed_extensions=['png'])])
