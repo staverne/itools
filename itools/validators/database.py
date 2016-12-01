@@ -26,6 +26,7 @@ class UniqueValidator(BaseValidator):
     validator_id = 'unique'
     errors = {'unique': MSG(u'The field should be unique.')}
     field_name = None
+    base_query = None
 
     def check(self, value):
         from itools.database import AndQuery, NotQuery
@@ -37,6 +38,8 @@ class UniqueValidator(BaseValidator):
         query = AndQuery(
             NotQuery(PhraseQuery('abspath', str(here.abspath))),
             PhraseQuery(self.field_name, value))
+        if self.base_query:
+            query.append(self.base_query)
         search = context.database.search(query)
         nb_results = len(search)
         if nb_results > 0:
