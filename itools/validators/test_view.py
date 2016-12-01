@@ -30,7 +30,7 @@ class TestValidators(AutoEdit):
 
     fields = ['field_1', 'field_2', 'field_3', 'field_4', 'field_5', 'field_6',
               'field_7', 'field_8', 'field_9', 'field_10', 'field_11', 'field_12',
-              'field_13', 'field_14']
+              'field_13', 'field_14', 'field_15']
 
     field_1 = Integer_Field(
         title=MSG(u'5+5 equals to ?'),
@@ -78,6 +78,12 @@ class TestValidators(AutoEdit):
     field_14 = Char_Field(
         title=MSG(u'Strong password'),
         validators=[validator('strong-password')])
+    field_15 = Char_Field(
+        title=MSG(u'Number >=5 and equals to 10'),
+        validators=[
+          validator('min-value', min_value=5),
+          validator('equals-to', base_value=10),
+        ])
 
 
     def _get_datatype(self, resource, context, name):
