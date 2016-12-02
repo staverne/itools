@@ -15,12 +15,38 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Import from itools
-from itools.core import is_prototype, prototype
+from itools.core import is_prototype, prototype, prototype_type
 from itools.gettext import MSG
 
 
-class Field(prototype):
+fields_index = {}
 
+def register_field_in_index(cls):
+    fields_index[cls.field_id] = cls
+
+
+def get_field_from_index(field_id):
+    return fields_index[field_id]
+
+
+class BaseFieldMetaclass(prototype_type):
+
+    def __new__(mcs, name, bases, dict):
+        cls = prototype_type.__new__(mcs, name, bases, dict)
+        if 'field_id' in dict and cls.field_id:
+            register_field_in_index(cls)
+        return cls
+
+
+class field_prototype(prototype):
+
+    __metaclass__ = BaseFieldMetaclass
+
+
+
+class Field(field_prototype):
+
+    field_id = None
     name = None
     title = None
     datatype = None

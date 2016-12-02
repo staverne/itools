@@ -18,7 +18,7 @@
 
 # Import from itools
 from catalog import Catalog, make_catalog
-from fields import Field, get_field_and_datatype
+from fields import Field, get_field_and_datatype, get_field_from_index
 from queries import AllQuery, NotQuery, StartQuery, TextQuery
 from queries import RangeQuery, PhraseQuery, AndQuery, OrQuery, pprint_query
 from magic_ import magic_from_buffer, magic_from_file
@@ -45,6 +45,7 @@ __all__ = [
     # Resources
     'Field',
     'get_field_and_datatype',
+    'get_field_from_index',
     'Resource',
     # Xapian
     'make_catalog',
