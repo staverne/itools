@@ -64,6 +64,9 @@ def get_compile_flags(command):
 
 
 if __name__ == '__main__':
+    from itools.pkg import setup
+    setup()
+    exit()
     ext_modules = []
 
     # XML Parser
