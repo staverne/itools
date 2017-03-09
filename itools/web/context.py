@@ -42,6 +42,7 @@ from itools.i18n import AcceptLanguageType, format_number
 from itools.i18n import format_datetime, format_date, format_time
 from itools.log import Logger, log_error, log_warning
 from itools.uri import decode_query, get_reference, Path, Reference
+from itools.validators import ValidationError
 
 # Local imports
 from entities import Entity
@@ -1133,8 +1134,8 @@ def _get_form_value(form, name, type=String, default=None):
         default = datatype.get_default()
 
     # Errors
-    required_msg = field.error_messages['required']
-    invalid_msg = field.error_messages['invalid']
+    required_msg = field.get_error_message('required')
+    invalid_msg = field.get_error_message('invalid')
 
     # Missing
     is_mandatory = getattr(datatype, 'mandatory', False)
@@ -1187,19 +1188,36 @@ def _get_form_value(form, name, type=String, default=None):
     return value
 
 
+def check_form_value(field, value):
+    if value in field.empty_values:
+        return
+    errors = []
+    for validator in field.get_validators():
+        validator = validator(title=field.title, context=context)
+        try:
+            validator.check(value)
+        except ValidationError, e:
+            errors.extend(e.get_messages(field))
+    if errors:
+        raise FormError(messages=errors, invalid=True)
+
+
 def get_form_value(form, name, type=String, default=None):
+    field, datatype = get_field_and_datatype(type)
     # Not multilingual
     is_multilingual = getattr(type, 'multilingual', False)
     if is_multilingual is False:
-        return _get_form_value(form, name, type, default)
-
+        value = _get_form_value(form, name, type, default)
+        check_form_value(field, value)
+        return value
     # Multilingual
     values = {}
     for key, value in form.iteritems():
         if key.startswith('%s:' % name):
             x, lang = key.split(':', 1)
-            values[lang] = _get_form_value(form, key, type, default)
-
+            value =_get_form_value(form, key, type, default)
+            values[lang] = value
+    check_form_value(field, values)
     return values
 
 
